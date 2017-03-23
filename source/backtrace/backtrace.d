@@ -119,7 +119,12 @@ Trace[] getLineTrace(const(void*[]) backtrace) {
   import std.algorithm, std.range;
   import std.process;
 
-  auto addr2line = pipeProcess(["addr2line", "-e" ~ exePath()], Redirect.stdin | Redirect.stdout);
+  version(linux) {
+    auto addr2line = pipeProcess(["addr2line", "-e" ~ exePath()], Redirect.stdin | Redirect.stdout);
+  }
+  else version(OSX) {
+    auto addr2line = pipeProcess(["gaddr2line", "-e" ~ exePath()], Redirect.stdin | Redirect.stdout);
+  }
   scope(exit) addr2line.pid.wait();
 
   Trace[] trace = new Trace[backtrace.length];
@@ -141,9 +146,9 @@ Trace[] getLineTrace(const(void*[]) backtrace) {
 }
 
 private string exePath() {
-  import std.file : readLink;
+  import std.file : thisExePath;
   import std.path : absolutePath;
-  string link = readLink("/proc/self/exe");
+  string link = thisExePath();
   string path = absolutePath(link, "/proc/self/");
   return path;
 }
