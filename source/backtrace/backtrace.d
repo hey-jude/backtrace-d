@@ -14,13 +14,13 @@ import std.stdio;
 version(linux) {
   import core.sys.linux.execinfo;
 }
-version(OSX) {
+else version(OSX) {
   import core.sys.darwin.execinfo;
 }
-version(FreeBSD) {
+else version(FreeBSD) {
   import core.sys.freebsd.execinfo;
 }
-version(Solaris) {
+else version(Solaris) {
   import core.sys.solaris.execinfo;
 }
 
