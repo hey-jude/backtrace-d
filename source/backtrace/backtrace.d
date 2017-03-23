@@ -2,16 +2,27 @@
 
 module backtrace.backtrace;
 
-version(linux) {
-  // allow only linux platform
+version(Windows) {
+  pragma(msg, "backtrace only works in Linux, FreeBSD, OS X, Solaris environment");
 } else {
-  pragma(msg, "backtrace only works in a Linux environment");
+  // allow only Linux, FreeBSD, OS X, Solaris platform
 }
 
-version(linux):
+version(Windows) {} else :
 
 import std.stdio;
-import core.sys.linux.execinfo;
+version(linux) {
+  import core.sys.linux.execinfo;
+}
+version(OSX) {
+  import core.sys.darwin.execinfo;
+}
+version(FreeBSD) {
+  import core.sys.freebsd.execinfo;
+}
+version(Solaris) {
+  import core.sys.solaris.execinfo;
+}
 
 private enum maxBacktraceSize = 32;
 private alias TraceHandler = Throwable.TraceInfo function(void* ptr);
